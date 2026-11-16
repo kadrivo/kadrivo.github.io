@@ -161,8 +161,7 @@ section{padding-block:clamp(48px,7vw,96px)}
 footer{padding:28px 0 64px;color:var(--muted);font-size:14px}
 
 /* the particle form is drawn on one full-window layer above the page */
-#fx{position:fixed;left:0;top:0;width:100%;height:100%;z-index:70;pointer-events:none;opacity:0;transition:opacity .6s ease}
-.fx-on #fx{opacity:1}
+#fx{position:fixed;left:0;top:0;width:100%;height:100%;z-index:70;pointer-events:none}
 .orb-cursor #fx{z-index:90}
 .orb-cursor,.orb-cursor *{cursor:none !important}
 
@@ -464,7 +463,7 @@ footer{padding:28px 0 64px;color:var(--muted);font-size:14px}
   /* ---------- particle layer: seven effects, each with its own switch ---------- */
   var hero=$('top'), slot=$('orbSlot'), fx=$('fx'), h1=$('h1'), h1alt=$('h1alt'), shown=false;
   var fine=window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  var FX={morph:false,wind:true,intro:false,trails:window.innerWidth>=700,cards:false};
+  var FX={morph:false,wind:true,intro:true,trails:window.innerWidth>=700,cards:false};
   var mx=0, my=0, hasMouse=false, hot=false, dimWant=false, dimS=1;
   if(fine)window.addEventListener('pointermove',function(e){
     if(e.pointerType!=='mouse')return;
@@ -492,11 +491,10 @@ footer{padding:28px 0 64px;color:var(--muted);font-size:14px}
    +'vec2 F=uHero+h.xy*persp*uScale;'
    +'float k1=1.;'
    +'if(uIntro<2.){'
-   +'vec2 dust=(aSeed.zw*1.5-.25)*uRes;vec2 FB=uBCenter+aHomeB.xy*uBScale;'
-   +'float k0=ez(clamp(uIntro*1.6-aSeed.y*.6,0.,1.));'
-   +'k1=ez(clamp((uIntro-1.)*1.7-aSeed.x*.7,0.,1.));'
-   +'vec2 d2=normalize(F-FB+vec2(.001));'
-   +'F=mix(mix(dust,FB,k0),F,k1)+vec2(-d2.y,d2.x)*sin(3.14159*k1)*(aSeed.z-.5)*240.*uDpr;}'
+   +'vec2 dust=uHero+(aSeed.zw-.5)*uScale*vec2(3.,4.2);'
+   +'k1=ez(clamp((uIntro-1.)*1.6-aSeed.x*.6,0.,1.));'
+   +'vec2 d2=normalize(F-dust+vec2(.001));'
+   +'F=mix(dust,F,k1)+vec2(-d2.y,d2.x)*sin(3.14159*k1)*(aSeed.z-.5)*110.*uDpr;}'
    +'vec2 dm=F-uMouse;float dd=length(dm);F+=dm/(dd+1.)*uPush*exp(-dd*dd/(16000.*uDpr*uDpr));'
    +'vec2 ds=F-uShock.xy;float ld=length(ds);'
    +'float wv=exp(-pow((ld-uShock.z*1000.*uDpr)/(80.*uDpr),2.))*max(0.,1.-uShock.z*1.15);F+=ds/(ld+1.)*wv*110.*uDpr;'
@@ -645,7 +643,7 @@ footer{padding:28px 0 64px;color:var(--muted);font-size:14px}
   var introT0=-1, introDone=false;
   function startIntro(){
     if(figGo)return;
-    figGo=true;root.classList.add('fx-on');
+    figGo=true;
     if(prog)addShape('word',wordShape(),0,.6);          /* the display font is in by now */
     if(!prog||reduce||!FX.intro||window.scrollY>40){introDone=true;return;}
     introT0=performance.now();
@@ -694,7 +692,7 @@ footer{padding:28px 0 64px;color:var(--muted);font-size:14px}
   (function(){var fr0=document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve(), fontsOK=false, t00=performance.now();
     function tryGo(force){if(!figGo&&(force||(fontsOK&&fok>=FN)))startIntro();}
     fr0.then(function(){fontsOK=true;tryGo(false);});
-    var iv=setInterval(function(){tryGo(performance.now()-t00>2600);if(figGo)clearInterval(iv);},100);})();
+    var iv=setInterval(function(){tryGo(performance.now()-t00>1500);if(figGo)clearInterval(iv);},100);})();
   $('styleBtn').addEventListener('click',function(){setTimeout(function(){if(prog)addShape('word',wordShape(),0,.6);},0);});
   var slots=[{el:slot,key:'hero'}];
   var icons=[];
@@ -770,8 +768,8 @@ footer{padding:28px 0 64px;color:var(--muted);font-size:14px}
         else target=1;                                  /* go back to the pointer first, then change shape */
       }
       if(introT0>=0&&sy>60)endIntro();
-      var intro=2;
-      if(introT0>=0){var it=(now-introT0)/1000;intro=1+it/1.9;if(intro>=2){intro=2;endIntro();}target=0;}
+      var intro=introDone?2:1;
+      if(introT0>=0){var it=(now-introT0)/1000;intro=1+it/1.1;if(intro>=2){intro=2;endIntro();}target=0;}
       sp+=(target-sp)*rate;if(Math.abs(target-sp)<.0008)sp=target;
 
       var tx0=fine&&hasMouse?mx:vw-44, ty0=fine&&hasMouse?my:vh-44;
@@ -779,7 +777,7 @@ footer{padding:28px 0 64px;color:var(--muted);font-size:14px}
       ax+=(tx0-ax)*.45;ay+=(ty0-ay)*.45;bx+=(tx0-bx)*.12;by+=(ty0-by)*.12;
       hotS+=((hot?1.9:1)-hotS)*.15;
       dimS+=((dimWant?0:1)-dimS)*.12;
-      var asCursor=figGo&&fine&&hasMouse&&sp>.985&&!dimWant;
+      var asCursor=fine&&hasMouse&&sp>.985&&!dimWant;
       if(asCursor!==root.classList.contains('orb-cursor'))root.classList.toggle('orb-cursor',asCursor);
       shock.t+=dt;
 
