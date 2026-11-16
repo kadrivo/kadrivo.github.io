@@ -792,7 +792,7 @@ footer{padding:28px 0 64px;color:var(--muted);font-size:14px}
         var hw=hero.clientWidth, hh=hero.clientHeight, sr=slot.getBoundingClientRect();
         if(hw!==h3w||hh!==h3h){h3w=hw;h3h=hh;h3.resize(hw,hh,Math.min(window.devicePixelRatio||1,2));}
         h3.place(sr.left+sr.width*.56-hr.left,sr.top+sr.height*.40-hr.top,Math.min(sr.width*.55,sr.height*.37));
-        h3.setPose(fpos);h3.setSpread(1-fpos);
+        h3.setPose(fpos);h3.setSpread((1-fpos)*(introDone?1:.3));
         h3o=h3.frame({now:now,dt:dt,mx:mx-hr.left,my:my-hr.top,has:fine&&hasMouse&&my<hr.bottom,p:0,reduce:reduce,rec:0});
         if(fine&&hasMouse&&!h3drag){var over=my<hr.bottom&&h3.hit(mx-hr.left,my-hr.top);if(over!==h3.over){h3.over=over;hero.style.cursor=over?'grab':'';}}
         else if(h3drag&&hero.style.cursor!=='grabbing')hero.style.cursor='grabbing';
