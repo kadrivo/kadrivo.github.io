@@ -153,7 +153,15 @@ section{padding-block:clamp(48px,7vw,96px)}
 .faq{display:flex;flex-direction:column;max-width:820px}
 .faq details{border-top:1px solid var(--line);padding:18px 0}
 .faq details:last-child{border-bottom:1px solid var(--line)}
-.faq summary{cursor:pointer;font-weight:700;font-size:19px;min-height:44px;display:flex;align-items:center}
+.faq summary{cursor:pointer;font-weight:700;font-size:19px;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:20px;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"";flex-shrink:0;width:40px;height:40px;border-radius:50%;border:1.5px solid var(--muted);
+  background:linear-gradient(currentColor,currentColor) center/14px 2px no-repeat,linear-gradient(currentColor,currentColor) center/2px 14px no-repeat;
+  transition:transform .3s cubic-bezier(.3,1.4,.5,1),border-color .2s,background-color .2s}
+.faq summary:hover::after{border-color:var(--ink)}
+.faq details[open] summary::after{transform:rotate(45deg);border-color:var(--accent);background-color:var(--accent);color:var(--on-accent)}
+.faq details[open] p{animation:faqIn .35s ease}
+@keyframes faqIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .faq p{color:var(--soft);padding-top:8px;max-width:38em}
 .final{background:var(--accent);color:var(--on-accent);border-radius:calc(var(--radius) + 8px);padding:clamp(28px,5vw,64px);display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
 .final-copy{display:flex;flex-direction:column;gap:16px;align-items:flex-start}
