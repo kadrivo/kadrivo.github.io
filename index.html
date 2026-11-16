@@ -499,12 +499,18 @@ footer{padding:28px 0 64px;color:var(--muted);font-size:14px}
    +'float cx=cos(rx),sx=sin(rx);h=vec3(h.x,h.y*cx-h.z*sx,h.y*sx+h.z*cx);'
    +'float persp=1./(1.-h.z*uPersp);'
    +'vec2 F=uHero+h.xy*persp*uScale;'
-   +'float k1=1.;'
+   +'float k1=1.,lv=1.;'
+   /* opening: one stream of dust flies in an arc from the lower left and writes the word left to right */
    +'if(uIntro<2.){'
-   +'vec2 dust=uHero+(aSeed.zw-.5)*uScale*vec2(3.,4.2);'
-   +'k1=ez(clamp((uIntro-1.)*1.6-aSeed.x*.6,0.,1.));'
-   +'vec2 d2=normalize(F-dust+vec2(.001));'
-   +'F=mix(dust,F,k1)+vec2(-d2.y,d2.x)*sin(3.14159*k1)*(aSeed.z-.5)*110.*uDpr;}'
+   +'float p=(uIntro-1.)*1.12;'
+   +'float d=clamp(aHome.x*.5+.5,0.,1.)*.62+aSeed.y*.12;'
+   +'float u=clamp((p-d)/.38,0.,1.);lv=step(.0001,u);'
+   +'vec2 S=uHero+vec2(-1.7,1.5)*uScale;'
+   +'vec2 Q=mix(S,F,.5)+vec2(.15,-1.25)*uScale;'
+   +'float e=1.-(1.-u)*(1.-u);'
+   +'vec2 B=mix(mix(S,Q,e),mix(Q,F,e),e);'
+   +'F=B+(aSeed.zw-.5)*uScale*.3*(1.-e);'
+   +'k1=u;}'
    +'vec2 dm=F-uMouse;float dd=length(dm);F+=dm/(dd+1.)*uPush*exp(-dd*dd/(16000.*uDpr*uDpr));'
    +'vec2 ds=F-uShock.xy;float ld=length(ds);'
    +'float wv=exp(-pow((ld-uShock.z*1000.*uDpr)/(80.*uDpr),2.))*max(0.,1.-uShock.z*1.15);F+=ds/(ld+1.)*wv*110.*uDpr;'
@@ -522,7 +528,7 @@ footer{padding:28px 0 64px;color:var(--muted);font-size:14px}
    +'float fs=(1.5+3.2*aSeed.w)*(1.+5.*big)*mix(.55,1.,uSpin)*persp*max(uScale/300.,.45*uDpr);'
    +'fs=mix(1.2*uDpr/max(uDpr,1.)+1.2*aSeed.w,fs,k1);'
    +'gl_PointSize=max(1.,uDpr*mix(fs/max(uDpr,1.),1.+1.2*aSeed.w+uBeat*1.5,t));'
-   +'vCol=mix(vec3(1.),aCol,k1);vCol+=vec3(.95,.85,.75)*exp(-pow((aHome.x-aHome.y*.6-(fract(uT*.14)*4.4-2.2))*5.,2.))*uShine*(1.-t);vA=mix((.4+.6*aSeed.z)*mix(.95,.16,big)*mix(.5,uGain,k1),.3,t)*uDim;'
+   +'vCol=mix(vec3(1.),aCol,k1);vCol+=vec3(.95,.85,.75)*exp(-pow((aHome.x-aHome.y*.6-(fract(uT*.14)*4.4-2.2))*5.,2.))*uShine*(1.-t);vA=mix((.4+.6*aSeed.z)*mix(.95,.16,big)*mix(.5,uGain,k1),.3,t)*uDim*lv;'
    +'float inR=step(uRect.x,P.x)*step(P.x,uRect.z)*step(uRect.y,P.y)*step(P.y,uRect.w);'
    +'float inF=step(uRect2.x,P.x)*step(P.x,uRect2.z)*step(uRect2.y,P.y)*step(P.y,uRect2.w);'
    +'vInk=max(uLight*(1.-inR),inF);}';
@@ -779,7 +785,7 @@ footer{padding:28px 0 64px;color:var(--muted);font-size:14px}
       }
       if(introT0>=0&&sy>60)endIntro();
       var intro=introDone?2:1;
-      if(introT0>=0){var it=(now-introT0)/1000;intro=1+it/1.1;if(intro>=2){intro=2;endIntro();}target=0;}
+      if(introT0>=0){var it=(now-introT0)/1000;intro=1+it/1.5;if(intro>=2){intro=2;endIntro();}target=0;}
       sp+=(target-sp)*rate;if(Math.abs(target-sp)<.0008)sp=target;
 
       var tx0=fine&&hasMouse?mx:vw-44, ty0=fine&&hasMouse?my:vh-44;
